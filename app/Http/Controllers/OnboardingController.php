@@ -1,0 +1,64 @@
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\User;
+
+class OnboardingController extends Controller
+{
+    public function store(Request $request)
+    {
+        // Validate incoming request
+        $validated = $request->validate([
+            'fullName' => 'required|string|max:255',
+            'age' => 'required|integer',
+            'gender' => 'required|string',
+            'hometown' => 'nullable|string',
+            'currentAddress' => 'nullable|string',
+            'collegeName' => 'nullable|string',
+            'profileImageUrl' => 'nullable|string',
+            'socialLinks' => 'nullable|array',
+            'foodPreference' => 'nullable|string',
+            'smokingHabit' => 'nullable|string',
+            'alcoholConsumption' => 'nullable|string',
+            'religion' => 'nullable|string',
+            'fieldOfStudy' => 'nullable|string',
+            'roomPreference' => 'nullable|string',
+            'about' => 'nullable|string',
+            'hobbies' => 'nullable|array',
+            'interests' => 'nullable|array',
+            'heartWays' => 'nullable|array',
+            'favoriteFoods' => 'nullable|array',
+            'currentHostel' => 'nullable|string',
+        ]);
+
+        // Store onboarding data directly in the database
+        $user = new User();
+        $user->fullName = $validated['fullName'];
+        $user->age = $validated['age'];
+        $user->gender = $validated['gender'];
+        $user->hometown = $validated['hometown'];
+        $user->currentAddress = $validated['currentAddress'];
+        $user->collegeName = $validated['collegeName'];
+        $user->profileImageUrl = $validated['profileImageUrl'];
+        $user->socialLinks = json_encode($validated['socialLinks'] ?? []);
+        $user->foodPreference = $validated['foodPreference'];
+        $user->smokingHabit = $validated['smokingHabit'];
+        $user->alcoholConsumption = $validated['alcoholConsumption'];
+        $user->religion = $validated['religion'];
+        $user->fieldOfStudy = $validated['fieldOfStudy'];
+        $user->roomPreference = $validated['roomPreference'];
+        $user->about = $validated['about'];
+        $user->hobbies = json_encode($validated['hobbies'] ?? []);
+        $user->interests = json_encode($validated['interests'] ?? []);
+        $user->heartWays = json_encode($validated['heartWays'] ?? []);
+        $user->favoriteFoods = json_encode($validated['favoriteFoods'] ?? []);
+        $user->currentHostel = $validated['currentHostel'];
+        $user->onboardingComplete = true;
+
+        // Save the user data to the database
+        $user->save();
+
+        return response()->json(['message' => 'Onboarding data saved successfully!'], 200);
+    }
+}
