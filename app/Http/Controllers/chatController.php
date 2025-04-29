@@ -24,4 +24,46 @@ class ChatController extends Controller
             'chat' => $chat,
         ], 201);
     }
+     // Fetch chat by ID
+     public function fetch($id)
+     {
+         $chat = Chat::find($id);
+ 
+         if (!$chat) {
+             return response()->json([
+                 'message' => 'Chat not found.',
+             ], 404);
+         }
+ 
+         return response()->json([
+             'chat' => $chat,
+         ]);
+     }
+ 
+     // Update chat messages
+     public function update(Request $request, $id)
+     {
+         $chat = Chat::find($id);
+ 
+         if (!$chat) {
+             return response()->json([
+                 'message' => 'Chat not found.',
+             ], 404);
+         }
+ 
+         $data = $request->validate([
+             'msg' => 'required|array|min:1',
+             'msg.*.sender' => 'required|string',
+             'msg.*.text' => 'required|string',
+             'msg.*.timestamp' => 'required|date',
+         ]);
+ 
+         $chat->msg = $data['msg'];
+         $chat->save();
+ 
+         return response()->json([
+             'message' => 'Chat updated successfully!',
+             'chat' => $chat,
+         ]);
+     }
 }

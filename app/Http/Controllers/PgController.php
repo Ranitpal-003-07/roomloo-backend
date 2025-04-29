@@ -60,4 +60,58 @@ class PgController extends Controller
             'post' => $pg,
         ], 201);
     }
+
+     // Fetch a PG listing by ID
+     public function fetch($id)
+     {
+         $pg = Pg::find($id);
+ 
+         if (!$pg) {
+             return response()->json(['message' => 'PG not found.'], 404);
+         }
+ 
+         return response()->json(['post' => $pg], 200);
+     }
+ 
+     // Update a PG listing by ID
+     public function update(Request $request, $id)
+     {
+         $pg = Pg::find($id);
+ 
+         if (!$pg) {
+             return response()->json(['message' => 'PG not found.'], 404);
+         }
+ 
+         $validated = $request->validate([
+             'title' => 'nullable|string|max:255',
+             'googleMapLink' => 'nullable|string',
+             'address' => 'nullable|string',
+             'location' => 'nullable|string',
+             'roomType' => 'nullable|string',
+             'sharingType' => 'nullable|string',
+             'amenities' => 'nullable|array',
+             'nearbyMetro' => 'nullable|string',
+             'nearbyBusStand' => 'nullable|string',
+             'nearbyLandmark' => 'nullable|string',
+             'nearbyCollege' => 'nullable|string',
+             'price' => 'nullable|string',
+             'ownerPhone' => 'nullable|string',
+             'ownerEmail' => 'nullable|string',
+             'description' => 'nullable|string',
+             'rules' => 'nullable|string',
+             'images' => 'nullable|array',
+         ]);
+ 
+         foreach ($validated as $key => $value) {
+             $pg->$key = $value;
+         }
+ 
+         $pg->updatedAt = now();
+         $pg->save();
+ 
+         return response()->json([
+             'message' => 'PG listing updated successfully!',
+             'post' => $pg,
+         ], 200);
+     }
 }
